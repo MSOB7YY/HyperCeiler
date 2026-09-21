@@ -34,10 +34,105 @@
             android:summary="@string/system_ui_control_center_media_control_color_anim_desc"
             android:title="@string/system_ui_control_center_media_control_color_anim" />
 
+        <SeekBarPreferenceCompat
+            android:key="prefs_key_system_ui_control_center_media_control_color_anim_duration"
+            android:dependency="prefs_key_system_ui_control_center_media_control_control_color_anim"
+            android:title="@string/system_ui_control_center_media_control_color_anim_duration"
+            app:defaultValue="333"
+            app:defaultValueTitle="@string/array_default"
+            app:format="%s ms"
+            app:maxValue="600"
+            app:minValue="50"
+            app:showDividerValue="10"
+            app:showSeekBarValue="true"
+            app:stepValue="1" />
+
+        <SeekBarPreferenceCompat
+            android:key="prefs_key_system_ui_control_center_media_control_cover_fade"
+            android:summary="@string/system_ui_control_center_media_control_cover_fade_desc"
+            android:title="@string/system_ui_control_center_media_control_cover_fade"
+            app:defaultValue="0"
+            app:defaultValueTitle="@string/array_close"
+            app:format="%s %%"
+            app:maxValue="100"
+            app:minValue="0"
+            app:showSeekBarValue="true"
+            app:stepValue="1" />
+
         <SwitchPreference
             android:defaultValue="false"
             android:key="prefs_key_system_ui_control_center_media_control_inverse_color"
             android:title="@string/system_ui_control_center_media_control_inverse_color" />
+
+        <SeekBarPreferenceCompat
+            android:key="prefs_key_system_ui_control_center_media_control_action_opacity"
+            android:title="@string/system_ui_control_center_media_control_action_opacity"
+            app:defaultValue="100"
+            app:defaultValueTitle="@string/array_default"
+            app:format="%s %%"
+            app:maxValue="100"
+            app:minValue="10"
+            app:showSeekBarValue="true"
+            app:stepValue="1" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefs_key_system_ui_control_center_media_control_display_metadata"
+            android:summary="@string/system_ui_control_center_media_control_display_metadata_desc"
+            android:title="@string/system_ui_control_center_media_control_display_metadata" />
+
+        <fan.preference.DropDownPreference
+            android:defaultValue="0"
+            android:dependency="prefs_key_system_ui_control_center_media_control_display_metadata"
+            android:key="prefs_key_system_ui_control_center_media_control_display_description"
+            android:title="@string/system_ui_control_center_media_control_display_description"
+            app:entries="@array/system_ui_control_center_media_control_display_description"
+            app:entryValues="@array/system_ui_control_center_media_control_display_description_value" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefs_key_system_ui_control_center_media_control_emphasize_text"
+            android:summary="@string/system_ui_control_center_media_control_emphasize_text_desc"
+            android:title="@string/system_ui_control_center_media_control_emphasize_text" />
+
+        <SeekBarPreferenceCompat
+            android:key="prefs_key_system_ui_control_center_media_control_text_padding_left"
+            android:title="@string/system_ui_control_center_media_control_text_padding_left"
+            app:defaultValue="0"
+            app:defaultValueTitle="@string/array_default"
+            app:format="%s dp"
+            app:maxValue="100"
+            app:minValue="0"
+            app:showSeekBarValue="true"
+            app:stepValue="1" />
+
+        <SeekBarPreferenceCompat
+            android:key="prefs_key_system_ui_control_center_media_control_text_padding_top"
+            android:title="@string/system_ui_control_center_media_control_text_padding_top"
+            app:defaultValue="0"
+            app:defaultValueTitle="@string/array_default"
+            app:format="%s dp"
+            app:maxValue="100"
+            app:minValue="0"
+            app:showSeekBarValue="true"
+            app:stepValue="1" />
+
+        <SeekBarPreferenceCompat
+            android:key="prefs_key_system_ui_control_center_media_control_action_spacing"
+            android:summary="@string/system_ui_control_center_media_control_action_spacing_desc"
+            android:title="@string/system_ui_control_center_media_control_action_spacing"
+            app:defaultValue="100"
+            app:defaultValueTitle="@string/array_default"
+            app:format="%s %%"
+            app:maxValue="100"
+            app:minValue="20"
+            app:showSeekBarValue="true"
+            app:stepValue="1" />
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="prefs_key_system_ui_control_center_media_control_compact_time"
+            android:title="@string/system_ui_control_center_media_control_compact_time" />
 
         <SeekBarPreferenceCompat
             android:key="prefs_key_system_ui_control_center_media_control_panel_background_blur"

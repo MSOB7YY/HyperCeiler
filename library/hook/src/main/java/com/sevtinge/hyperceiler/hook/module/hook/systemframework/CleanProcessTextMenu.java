@@ -18,6 +18,8 @@
  */
 package com.sevtinge.hyperceiler.hook.module.hook.systemframework;
 
+import static com.sevtinge.hyperceiler.hook.utils.devicesdk.SystemSDKKt.isMoreAndroidVersion;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;

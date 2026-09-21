@@ -272,9 +272,9 @@ object MediaViewLayout : BaseHook() {
                 mediaViewControllerClass!!.methodFinder()
                     .filterByName("loadLayoutForType")
                     .first().createAfterHook {
-                        val expandedLayout = it.thisObject.getObjectFieldOrNull("expandedLayout")
-                            ?: return@createAfterHook
-                        updateConstraintSet(expandedLayout)
+                        // 折叠态与展开态各持一份约束，只改其一会让通知中心的卡片不生效
+                        it.thisObject.getObjectFieldOrNull("collapsedLayout")?.let(::updateConstraintSet)
+                        it.thisObject.getObjectFieldOrNull("expandedLayout")?.let(::updateConstraintSet)
                     }
             }
         }
@@ -319,6 +319,7 @@ object MediaViewLayout : BaseHook() {
     }
 
     private fun updateConstraintSet(constraintSet: Any) {
+        logD(TAG, "updateConstraintSet: icon=$icon albumArt=$albumArt seamless=$mediaSeamless title=$headerTitle")
         val standardMargin = 26
         if (album == 2) {
 //                            connect?.invoke(expandedLayout,

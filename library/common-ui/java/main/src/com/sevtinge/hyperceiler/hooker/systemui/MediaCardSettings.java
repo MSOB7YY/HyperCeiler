@@ -42,6 +42,16 @@ public class MediaCardSettings extends DashboardFragment implements Preference.O
     DropDownPreference mProgressMode;
     SeekBarPreferenceCompat mProgressModeThickness;
     SeekBarPreferenceCompat mProgressModeCornerRadius;
+    SeekBarPreferenceCompat mColorAnimDuration;
+    SeekBarPreferenceCompat mCoverFade;
+    SeekBarPreferenceCompat mActionOpacity;
+    SwitchPreference mDisplayMetadata;
+    DropDownPreference mDisplayDescription;
+    SwitchPreference mEmphasizeText;
+    SeekBarPreferenceCompat mTextPaddingLeft;
+    SeekBarPreferenceCompat mTextPaddingTop;
+    SeekBarPreferenceCompat mActionSpacing;
+    SwitchPreference mCompactTime;
     ColorPickerPreference mSliderColor;
     ColorPickerPreference mProgressBarColor;
 
@@ -54,6 +64,16 @@ public class MediaCardSettings extends DashboardFragment implements Preference.O
     public void initPrefs() {
         mMediaBackgroundMode = findPreference("prefs_key_system_ui_control_center_media_control_background_mode");
         mColorAnim = findPreference("prefs_key_system_ui_control_center_media_control_control_color_anim");
+        mColorAnimDuration = findPreference("prefs_key_system_ui_control_center_media_control_color_anim_duration");
+        mCoverFade = findPreference("prefs_key_system_ui_control_center_media_control_cover_fade");
+        mActionOpacity = findPreference("prefs_key_system_ui_control_center_media_control_action_opacity");
+        mDisplayMetadata = findPreference("prefs_key_system_ui_control_center_media_control_display_metadata");
+        mDisplayDescription = findPreference("prefs_key_system_ui_control_center_media_control_display_description");
+        mEmphasizeText = findPreference("prefs_key_system_ui_control_center_media_control_emphasize_text");
+        mTextPaddingLeft = findPreference("prefs_key_system_ui_control_center_media_control_text_padding_left");
+        mTextPaddingTop = findPreference("prefs_key_system_ui_control_center_media_control_text_padding_top");
+        mActionSpacing = findPreference("prefs_key_system_ui_control_center_media_control_action_spacing");
+        mCompactTime = findPreference("prefs_key_system_ui_control_center_media_control_compact_time");
         mInverseColor = findPreference("prefs_key_system_ui_control_center_media_control_inverse_color");
         mBlurRadius = findPreference("prefs_key_system_ui_control_center_media_control_panel_background_blur");
 
@@ -76,6 +96,16 @@ public class MediaCardSettings extends DashboardFragment implements Preference.O
             }
         }
         mColorAnim.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mColorAnimDuration.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mActionOpacity.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mDisplayMetadata.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mDisplayDescription.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mEmphasizeText.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mTextPaddingLeft.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mTextPaddingTop.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mActionSpacing.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mCompactTime.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mCoverFade.setVisible(mediaBackgroundModeValue == 6);
         mInverseColor.setVisible(mediaBackgroundModeValue == 4);
         mBlurRadius.setVisible(mediaBackgroundModeValue == 2);
 
@@ -114,6 +144,16 @@ public class MediaCardSettings extends DashboardFragment implements Preference.O
 
     private void setMediaBackgroundMode(int mode) {
         mColorAnim.setVisible(mode != 0 && mode != 5);
+        mColorAnimDuration.setVisible(mode != 0 && mode != 5);
+        mActionOpacity.setVisible(mode != 0 && mode != 5);
+        mDisplayMetadata.setVisible(mode != 0 && mode != 5);
+        mDisplayDescription.setVisible(mode != 0 && mode != 5);
+        mEmphasizeText.setVisible(mode != 0 && mode != 5);
+        mTextPaddingLeft.setVisible(mode != 0 && mode != 5);
+        mTextPaddingTop.setVisible(mode != 0 && mode != 5);
+        mActionSpacing.setVisible(mode != 0 && mode != 5);
+        mCompactTime.setVisible(mode != 0 && mode != 5);
+        mCoverFade.setVisible(mode == 6);
         mInverseColor.setVisible(mode == 4);
         mBlurRadius.setVisible(mode == 2);
         mProgressBarColor.setVisible(mode != 5);

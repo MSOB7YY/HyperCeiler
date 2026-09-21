@@ -41,4 +41,7 @@ interface BgProcessor {
     ): Drawable
 
     fun createBackground(artwork: Drawable, colorConfig: MediaViewColorConfig): MediaControlBgDrawable
+
+    // 封面占据卡片右侧时返回其宽度，文本不得压到这段区域
+    fun textEndInset(width: Int, height: Int): Int = 0
 }

@@ -18,6 +18,7 @@
 */
 package com.sevtinge.hyperceiler.hook.module.hook.systemui.plugin.systemui;
 
+import static com.sevtinge.hyperceiler.hook.utils.devicesdk.SystemSDKKt.isMoreHyperOSVersion;
 import static com.sevtinge.hyperceiler.hook.utils.log.XposedLogUtils.logE;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 
@@ -109,13 +110,15 @@ public class CustomCardTiles {
                 }
         );
 
-        findAndHookMethod("miui.systemui.controlcenter.panel.main.qs.QSCardsController", classLoader,
-            "createVoWifiTiles",
-            new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(XC_MethodHook.MethodHookParam param)  {
-                    param.setResult(null);
-                }
-            });
+        if (isMoreHyperOSVersion(2f)) {
+            findAndHookMethod("miui.systemui.controlcenter.panel.main.qs.QSCardsController", classLoader,
+                    "createVoWifiTiles",
+                    new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(XC_MethodHook.MethodHookParam param)  {
+                            param.setResult(null);
+                        }
+                    });
+        }
     }
 }

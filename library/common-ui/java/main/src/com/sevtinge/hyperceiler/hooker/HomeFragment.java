@@ -47,6 +47,10 @@ public class HomeFragment extends DashboardFragment {
         boolean isDebugMode = getSharedPreferences().getBoolean("prefs_key_debug_mode", false);
         logE("HyperHome", "initPrefs: com.miui.home check: " + check);
         mHeader.setVisible(check && !isDebugMode);
+
+        if (!isMoreHyperOSVersion(3f)) {
+            setHide(findPreference("prefs_key_home_recent_blur_level"), isMoreHyperOSVersion(2f));
+        }
     }
 
 }

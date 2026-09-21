@@ -62,7 +62,10 @@ object DisableBottomBar : BaseHook() {
                 }
 
         } else {
-            loadClass("com.android.wm.shell.multitasking.miuimultiwinswitch.miuiwindowdecor.MiuiBottomDecoration")
+            loadClass(
+                if (isMoreAndroidVersion(35)) "com.android.wm.shell.multitasking.miuimultiwinswitch.miuiwindowdecor.MiuiBottomDecoration"
+                else "com.android.wm.shell.miuimultiwinswitch.miuiwindowdecor.MiuiBaseWindowDecoration"
+            )
                 .methodFinder().filterByName("createBottomCaption").first()
                 .createHook {
                     returnConstant(null)

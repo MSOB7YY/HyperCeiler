@@ -19,6 +19,7 @@
 package com.sevtinge.hyperceiler.hook.module.hook.systemui.lockscreen
 
 import com.sevtinge.hyperceiler.hook.module.base.BaseHook
+import com.sevtinge.hyperceiler.hook.utils.devicesdk.isAndroidVersion
 import io.github.kyuubiran.ezxhelper.core.finder.MethodFinder.`-Static`.methodFinder
 import io.github.kyuubiran.ezxhelper.core.util.ClassUtil.loadClassOrNull
 import io.github.kyuubiran.ezxhelper.xposed.dsl.HookFactory.`-Static`.createHook
@@ -30,8 +31,7 @@ object AllowThirdLockScreenUseFace : BaseHook() {
             ?.single()?.createHook {
                 returnConstant(true)
             }
-
-        loadClassOrNull("miui.stub.keyguard.KeyguardStub\$registerKeyguardUpdateMonitor$1")?.methodFinder()
+        loadClassOrNull(if (isAndroidVersion(35)) "miui.stub.keyguard.KeyguardStub\$registerKeyguardUpdateMonitor\$1" else "miui.stub.MiuiStub\$3")?.methodFinder()
             ?.filterByName("isUnlockWithFingerprintPossible")
             ?.single()?.createHook {
                 returnConstant(true)

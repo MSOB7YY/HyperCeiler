@@ -19,12 +19,14 @@
 package com.sevtinge.hyperceiler.hooker.home;
 
 import static com.sevtinge.hyperceiler.hook.utils.devicesdk.MiDeviceAppUtilsKt.isPad;
+import static com.sevtinge.hyperceiler.hook.utils.devicesdk.SystemSDKKt.isHyperOSVersion;
 import static com.sevtinge.hyperceiler.hook.utils.devicesdk.SystemSDKKt.isMoreHyperOSVersion;
 
 import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.preference.Preference;
+import androidx.preference.PreferenceCategory;
 import androidx.preference.SwitchPreference;
 
 import com.sevtinge.hyperceiler.common.prefs.RecommendPreference;
@@ -33,13 +35,18 @@ import com.sevtinge.hyperceiler.sub.AppPickerFragment;
 import com.sevtinge.hyperceiler.sub.SubPickerActivity;
 import com.sevtinge.hyperceiler.ui.R;
 
+import fan.preference.SeekBarPreferenceCompat;
+
 public class HomeTitleSettings extends DashboardFragment {
 
     SwitchPreference mDisableMonoChrome;
     SwitchPreference mDisableMonetColor;
     SwitchPreference mDisableHideTheme;
+    SwitchPreference mIconSize;
+    SeekBarPreferenceCompat mTitleFontSize;
     Preference mIconTitleCustomization;
     RecommendPreference mRecommend;
+    PreferenceCategory mAppBlur;
 
     @Override
     public int getPreferenceScreenResId() {
@@ -55,6 +62,9 @@ public class HomeTitleSettings extends DashboardFragment {
         mDisableMonetColor = findPreference("prefs_key_home_other_icon_monet_color");
         mDisableMonetColor.setOnPreferenceChangeListener((preference, o) -> true);
         mDisableHideTheme = findPreference("prefs_key_home_title_disable_hide_theme");
+        mAppBlur = findPreference("prefs_key_home_title_app_blur_hyper");
+        mIconSize = findPreference("prefs_key_home_title_icon_size_enable");
+        mTitleFontSize = findPreference("prefs_key_home_drawer_title_font_size");
 
         mIconTitleCustomization = findPreference("prefs_key_home_title_title_icontitlecustomization");
         mIconTitleCustomization.setOnPreferenceClickListener(preference -> {
@@ -66,6 +76,9 @@ public class HomeTitleSettings extends DashboardFragment {
         });
 
         setHide(mDisableHideTheme, isPad());
+        setHide(mAppBlur, isHyperOSVersion(1f));
+        setHide(mIconSize, isHyperOSVersion(2f));
+        setHide(mTitleFontSize, isMoreHyperOSVersion(2f));
 
         Bundle args1 = new Bundle();
         Bundle args2 = new Bundle();

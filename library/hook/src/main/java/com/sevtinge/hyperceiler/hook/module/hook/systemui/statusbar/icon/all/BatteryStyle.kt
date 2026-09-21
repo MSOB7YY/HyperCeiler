@@ -65,11 +65,15 @@ object BatteryStyle : BaseHook() {
     }
 
     override fun init() {
-        mBatteryMeterViewClass.methodFinder()
-            .filterByName("updateAll$1")
-            .single().createAfterHook { param ->
-                hookStatusBattery(param)
-            }
+        if (isMoreAndroidVersion(35)) {
+            mBatteryMeterViewClass.methodFinder()
+                .filterByName("updateAll\$1")
+        } else {
+            mBatteryMeterViewClass.methodFinder()
+                .filterByName("updateAll")
+        }.single().createAfterHook { param ->
+            hookStatusBattery(param)
+        }
     }
 
     private fun changeLocation(

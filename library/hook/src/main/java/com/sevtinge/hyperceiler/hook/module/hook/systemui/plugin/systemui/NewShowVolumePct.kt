@@ -43,6 +43,27 @@ object NewShowVolumePct {
     private val streamCache = WeakHashMap<Any, Int>()
     @JvmStatic
     fun initLoader(classLoader: ClassLoader) {
+        if (!isMoreHyperOSVersion(2f)) {
+            val miuiVolumeDialogImplClazz by lazy {
+                loadClass("com.android.systemui.miui.volume.MiuiVolumeDialogImpl", classLoader)
+            }
+            val miuiVolumeDialogImplListener by lazy {
+                loadClass("com.android.systemui.miui.volume.MiuiVolumeDialogImpl\$VolumeSeekBarChangeListener", classLoader)
+            }
+
+            miuiVolumeDialogImplClazz.methodFinder().filterByName("showVolumeDialogH")
+                .first().createAfterHook {
+                    val mVolumeView =
+                        it.thisObject.getObjectField("mDialogView") as View
+                    val windowView = mVolumeView.parent as FrameLayout
+                    initPct(windowView, 3)
+                }
+
+            mVolumeDisable(miuiVolumeDialogImplClazz)
+            onProgressChanged(miuiVolumeDialogImplListener, mSupportSV)
+            return
+        }
+
         val volumePanelViewControllerClazz by lazy {
             loadClass("com.android.systemui.miui.volume.VolumePanelViewController", classLoader)
         }
@@ -134,8 +155,7 @@ object NewShowVolumePct {
                 val maxLevel = max / 1000
                 if (currentLevel != 0) {
                     val i3 = maxLevel - 1
-                    currentLevel =
-                        if (currentLevel == max) maxLevel else (currentLevel * i3 / max) + 1
+                    currentLevel = if (currentLevel == max) maxLevel else (currentLevel * i3 / max) + 1
                 }
 
                 mPct.text = if (((currentLevel * 100) / maxLevel) == 100 && mSupportSV) {

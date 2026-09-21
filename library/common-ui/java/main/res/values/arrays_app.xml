@@ -460,6 +460,26 @@
         <item>3</item>
     </string-array>
 
+    <string-array name="home_recent_blur">
+        <item>@string/array_default</item>
+        <item>@string/home_recent_complete_blur_plus</item>
+        <item>@string/home_recent_complete_blur</item>
+        <item>@string/home_recent_test_blur</item>
+        <item>@string/home_recent_simple_blur</item>
+        <item>@string/home_recent_none_blur</item>
+        <item>@string/home_recent_none_blur_simple_anim</item>
+    </string-array>
+
+    <string-array name="home_recent_blur_value">
+        <item>6</item>
+        <item>5</item>
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+    </string-array>
+
     <string-array name="lock_screen_bottom_left_button">
         <item>@string/array_default</item>
         <item>@string/array_hide</item>
@@ -534,6 +554,7 @@
         <item>@string/media_control_ground_mode_2</item>
         <item>@string/media_control_ground_mode_3</item>
         <item>@string/media_control_ground_mode_4</item>
+        <item>@string/media_control_ground_mode_6</item>
     </string-array>
 
     <string-array name="system_ui_control_center_media_control_background_mode_new_value">
@@ -542,6 +563,7 @@
         <item>2</item>
         <item>3</item>
         <item>4</item>
+        <item>6</item>
     </string-array>
 
     <string-array name="system_ui_control_center_media_control_background_mode">
@@ -551,6 +573,7 @@
         <item>@string/media_control_ground_mode_3</item>
         <item>@string/media_control_ground_mode_4</item>
         <item>@string/media_control_ground_mode_5</item>
+        <item>@string/media_control_ground_mode_6</item>
     </string-array>
 
     <string-array name="system_ui_control_center_media_control_background_mode_value">
@@ -560,6 +583,23 @@
         <item>3</item>
         <item>4</item>
         <item>5</item>
+        <item>6</item>
+    </string-array>
+
+    <string-array name="system_ui_control_center_media_control_display_description">
+        <item>@string/array_close</item>
+        <item>@string/media_control_display_description_seamless</item>
+        <item>@string/media_control_display_description_second_line</item>
+        <item>@string/media_control_display_description_title_end</item>
+        <item>@string/media_control_display_description_title_start</item>
+    </string-array>
+
+    <string-array name="system_ui_control_center_media_control_display_description_value">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
     </string-array>
 
     <string-array name="system_ui_control_center_media_control_album_mode">

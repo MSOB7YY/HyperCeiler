@@ -18,6 +18,7 @@
  */
 package com.sevtinge.hyperceiler.hook.module.hook.systemui.controlcenter;
 
+import static com.sevtinge.hyperceiler.hook.utils.devicesdk.SystemSDKKt.isMoreAndroidVersion;
 import static io.github.kyuubiran.ezxhelper.xposed.EzXposed.getAppContext;
 
 import android.annotation.SuppressLint;
@@ -28,6 +29,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
+import android.os.Build;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.ArrayMap;
@@ -226,7 +228,7 @@ public class FiveGTile extends TileUtils {
 
     @Override
     public String setTileProvider() {
-        return "nfcTileProvider";
+        return isMoreAndroidVersion(Build.VERSION_CODES.TIRAMISU) ? "nfcTileProvider" : "mNfcTileProvider";
     }
 
     @Override

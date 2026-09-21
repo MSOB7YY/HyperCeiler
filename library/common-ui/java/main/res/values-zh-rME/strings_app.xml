@@ -485,6 +485,7 @@
     <string name="system_ui_lock_screen_show_battery_temperature">Oppo A5的电池快热炸了</string>
     <string name="system_ui_lock_screen_show_spacing">没有时间间隔</string>
     <string name="system_ui_lock_screen_hide_camera">防止版本T0污蔑</string>
+    <string name="system_ui_lock_screen_hide_smart_screen">隐藏并不聪明的屏幕</string>
     <string name="system_ui_lock_screen_current">当前电流</string>
     <string name="system_ui_lock_screen_blur_button">糊上锁屏按钮</string>
     <string name="system_ui_lock_screen_blur_button_radius">背景圆角</string>
@@ -634,4 +635,5 @@
     <string name="various_disable_folder_cantuse">让我看看</string>
     <string name="ic_qs_title_bluetooth">蓝色牙齿</string>
     <string name="ic_qs_title_flashlight">烫点</string>
+    <string name="personal_assistant_blur_model">选择你的英雄</string>
 </resources>

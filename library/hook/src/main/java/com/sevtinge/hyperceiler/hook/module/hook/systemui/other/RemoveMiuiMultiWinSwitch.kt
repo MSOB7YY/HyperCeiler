@@ -36,7 +36,10 @@ object RemoveMiuiMultiWinSwitch : BaseHook() {
                 }
 
         } else {
-            loadClass("com.android.wm.shell.multitasking.miuimultiwinswitch.miuiwindowdecor.MiuiBaseWindowDecoration")
+            loadClass(
+                if (isMoreAndroidVersion(35)) "com.android.wm.shell.multitasking.miuimultiwinswitch.miuiwindowdecor.MiuiBaseWindowDecoration"
+                else "com.android.wm.shell.miuimultiwinswitch.miuiwindowdecor.MiuiBaseWindowDecoration"
+            )
                 .methodFinder()
                 .filterByName("shouldHideCaption")
                 .single().createHook {

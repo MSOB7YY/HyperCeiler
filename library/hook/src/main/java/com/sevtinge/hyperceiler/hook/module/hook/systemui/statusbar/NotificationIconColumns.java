@@ -77,7 +77,12 @@ public class NotificationIconColumns extends BaseHook {
                 new MethodHook() {
                     @Override
                     protected void before(MethodHookParam param) {
-                        XposedHelpers.setObjectField(param.thisObject, "mMaxIcons", maxIconsNum);
+                        if (isMoreAndroidVersion(35)) {
+                            XposedHelpers.setObjectField(param.thisObject, "mMaxIcons", maxIconsNum);
+                        } else {
+                            XposedHelpers.setObjectField(param.thisObject, "mMaxStaticIcons", maxIconsNum);
+                            XposedHelpers.setObjectField(param.thisObject, "mIsStaticLayout", true);
+                        }
                     }
                 }
         );
@@ -87,10 +92,27 @@ public class NotificationIconColumns extends BaseHook {
                 new MethodHook() {
                     @Override
                     protected void before(MethodHookParam param) {
-                        XposedHelpers.setObjectField(param.thisObject, "mMaxIcons", maxIconsNum);
+                        if (isMoreAndroidVersion(35)) {
+                            XposedHelpers.setObjectField(param.thisObject, "mMaxIcons", maxIconsNum);
+                        } else {
+                            XposedHelpers.setObjectField(param.thisObject, "mMaxStaticIcons", maxIconsNum);
+                            XposedHelpers.setObjectField(param.thisObject, "mIsStaticLayout", true);
+                        }
                     }
                 }
         );
+
+        if (!isMoreAndroidVersion(35)) {
+            findAndHookMethod("com.android.systemui.statusbar.phone.NotificationIconContainer",
+                    "calculateWidthFor", float.class,
+                    new MethodHook() {
+                        @Override
+                        protected void before(MethodHookParam param) {
+                            XposedHelpers.setObjectField(param.thisObject, "mMaxIconsOnLockscreen", maxIconsNum);
+                        }
+                    }
+            );
+        }
     }
 
     public void listening(Context context) {

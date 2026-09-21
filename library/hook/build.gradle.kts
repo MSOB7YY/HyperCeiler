@@ -59,6 +59,7 @@ dependencies {
     }
 
     api(libs.core.ktx)
+    api(libs.palette)
     api(libs.expansion)
     compileOnlyApi(projects.library.hiddenApi)
     compileOnlyApi(libs.xposed.api)

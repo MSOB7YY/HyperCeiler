@@ -19,6 +19,7 @@
 package com.sevtinge.hyperceiler.hooker.framework;
 
 import static com.sevtinge.hyperceiler.hook.utils.devicesdk.SystemSDKKt.isMoreAndroidVersion;
+import static com.sevtinge.hyperceiler.hook.utils.devicesdk.SystemSDKKt.isMoreHyperOSVersion;
 
 import androidx.preference.SwitchPreference;
 
@@ -30,6 +31,7 @@ public class CorePatchSettings extends DashboardFragment {
     SwitchPreference mDownGr;
     SwitchPreference mDisableCreak;
     SwitchPreference mDisableIntegrity;
+    SwitchPreference mIsolationViolation;
     SwitchPreference mSharedUser;
     SwitchPreference mDigestCreak;
     SwitchPreference mExactSignatureCheck;
@@ -49,6 +51,7 @@ public class CorePatchSettings extends DashboardFragment {
         mDownGr = findPreference("prefs_key_system_framework_core_patch_downgr");
         mDisableCreak = findPreference("prefs_key_system_framework_core_patch_auth_creak");
         mDisableIntegrity = findPreference("prefs_key_system_framework_core_patch_disable_integrity");
+        mIsolationViolation = findPreference("prefs_key_system_framework_core_patch_bypass_isolation_violation");
         mSharedUser = findPreference("prefs_key_system_framework_core_patch_shared_user");
         mDigestCreak = findPreference("prefs_key_system_framework_core_patch_digest_creak");
         mExactSignatureCheck = findPreference("prefs_key_system_framework_core_patch_exact_signature_check");
@@ -65,6 +68,7 @@ public class CorePatchSettings extends DashboardFragment {
         mUsePreSignature.setVisible(mEnable);
 
         setHide(mLossFingerprint, isMoreAndroidVersion(36));
+        mIsolationViolation.setVisible(isMoreHyperOSVersion(2f));
 
         findPreference("prefs_key_system_framework_core_patch_enable").setOnPreferenceChangeListener((preference, o) -> {
             if ((boolean) o) {

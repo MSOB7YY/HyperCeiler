@@ -25,6 +25,7 @@ import android.widget.TextView
 import com.hchen.superlyricapi.SuperLyricData
 import com.sevtinge.hyperceiler.hook.module.base.pack.systemui.MusicBaseHook
 import com.sevtinge.hyperceiler.hook.utils.callMethod
+import com.sevtinge.hyperceiler.hook.utils.devicesdk.isAndroidVersion
 import com.sevtinge.hyperceiler.hook.utils.devicesdk.isMoreHyperOSVersion
 import com.sevtinge.hyperceiler.hook.utils.getFloatField
 import com.sevtinge.hyperceiler.hook.utils.getObjectField
@@ -87,7 +88,11 @@ object FocusNotifLyric : MusicBaseHook() {
             .filterByName("onCreateView")
             .first().createHook {
                 before {
-                    unhook = loadClass("com.android.systemui.statusbar.widget.FocusedTextView").constructorFinder()
+                    unhook = if (isAndroidVersion(34)) {
+                        loadClass("com.android.systemui.statusbar.views.FocusedTextView")
+                    } else {
+                        loadClass("com.android.systemui.statusbar.widget.FocusedTextView")
+                    }.constructorFinder()
                         .filterByParamCount(3)
                         .first().createAfterHook {
                             focusTextViewList += it.thisObject as TextView

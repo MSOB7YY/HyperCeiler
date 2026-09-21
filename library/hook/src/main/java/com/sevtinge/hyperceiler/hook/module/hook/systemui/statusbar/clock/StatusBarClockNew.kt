@@ -29,6 +29,7 @@ import com.sevtinge.hyperceiler.hook.utils.api.LazyClass.mNewClockClass
 import com.sevtinge.hyperceiler.hook.utils.callMethod
 import com.sevtinge.hyperceiler.hook.utils.devicesdk.DisplayUtils.dp2px
 import com.sevtinge.hyperceiler.hook.utils.devicesdk.isMoreAndroidVersion
+import com.sevtinge.hyperceiler.hook.utils.devicesdk.isMoreHyperOSVersion
 import com.sevtinge.hyperceiler.hook.utils.getObjectField
 import de.robv.android.xposed.XC_MethodHook
 import io.github.kyuubiran.ezxhelper.core.finder.ConstructorFinder.`-Static`.constructorFinder
@@ -301,7 +302,7 @@ object StatusBarClockNew : BaseHook() {
     private fun setMiuiClockStyle(name: String, text: TextView) {
         val shouldUseBold = setOf(
             sBold && name == "clock",
-            bBold && name == "big_time",
+            bBold && name == "big_time" && !isMoreHyperOSVersion(2f),
             nBold && name in setOf("date_time", "horizontal_time"),
             pBold && name == "pad_clock"
         ).any { it }

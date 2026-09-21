@@ -30,6 +30,7 @@ import com.sevtinge.hyperceiler.hook.module.hook.systemui.AutoCollapse;
 import com.sevtinge.hyperceiler.hook.module.hook.systemui.AutoSEffSwitchForSystemUi;
 import com.sevtinge.hyperceiler.hook.module.hook.systemui.DisableTransparent;
 import com.sevtinge.hyperceiler.hook.module.hook.systemui.FuckStatusbarGestures;
+import com.sevtinge.hyperceiler.hook.module.hook.systemui.NotificationFix;
 import com.sevtinge.hyperceiler.hook.module.hook.systemui.StickyFloatingWindowsForSystemUI;
 import com.sevtinge.hyperceiler.hook.module.hook.systemui.UiLockApp;
 import com.sevtinge.hyperceiler.hook.module.hook.systemui.UnlockClipboard;
@@ -253,7 +254,8 @@ public class SystemUIV extends BaseModule {
         initHook(CustomBackground.INSTANCE, mPrefsMap.getStringAsInt("system_ui_control_center_media_control_background_mode", 0) != 0);
         initHook(new MediaControlPanelBackgroundMix(), mPrefsMap.getStringAsInt("system_ui_control_center_media_control_background_mode", 0) == 5);
         initHook(new UnlockCustomActions(), mPrefsMap.getBoolean("system_ui_control_center_media_control_unlock_custom_actions"));
-        initHook(MediaViewLayout.INSTANCE, mPrefsMap.getBoolean("system_ui_control_center_media_control_media_button_layout_switch"));
+        initHook(MediaViewLayout.INSTANCE, mPrefsMap.getBoolean("system_ui_control_center_media_control_media_button_layout_switch")
+            || mPrefsMap.getStringAsInt("system_ui_control_center_media_control_media_album_mode", 0) == 2);
         initHook(MediaViewSize.INSTANCE, mPrefsMap.getBoolean("system_ui_control_center_media_control_media_button_size_switch"));
         initHook(MediaPicture.INSTANCE, mPrefsMap.getBoolean("system_ui_control_center_media_control_album_picture_rounded_corners") ||
             mPrefsMap.getStringAsInt("system_ui_control_center_media_control_media_album_mode", 0) == 1);
@@ -267,6 +269,7 @@ public class SystemUIV extends BaseModule {
 
         // Other
         initHook(new UiLockApp(), mPrefsMap.getBoolean("system_framework_guided_access"));
+        initHook(new NotificationFix(), mPrefsMap.getBoolean("system_ui_other_notification_fix"));
         initHook(new BrightnessPct(), mPrefsMap.getBoolean("system_showpct_title"));
         initHook(DisableMiuiMultiWinSwitch.INSTANCE, mPrefsMap.getBoolean("system_ui_disable_miui_multi_win_switch"));
         initHook(RemoveMiuiMultiWinSwitch.INSTANCE, mPrefsMap.getBoolean("system_ui_remove_miui_multi_win_switch"));

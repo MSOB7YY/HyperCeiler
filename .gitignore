@@ -12,5 +12,6 @@ local.properties
 /app/beta
 /app/canary
 /app/debug
+/app/*.keystore
 signing.properties
 /.kotlin

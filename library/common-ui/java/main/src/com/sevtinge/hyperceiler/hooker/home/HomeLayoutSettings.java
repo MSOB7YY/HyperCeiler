@@ -19,6 +19,7 @@
 package com.sevtinge.hyperceiler.hooker.home;
 
 import static com.sevtinge.hyperceiler.hook.utils.devicesdk.MiDeviceAppUtilsKt.isPad;
+import static com.sevtinge.hyperceiler.hook.utils.devicesdk.SystemSDKKt.isMoreHyperOSVersion;
 
 import androidx.preference.PreferenceCategory;
 import androidx.preference.SwitchPreference;
@@ -33,6 +34,8 @@ import fan.preference.SeekBarPreferenceCompat;
 public class HomeLayoutSettings extends DashboardFragment {
 
     PreferenceCategory mSearch;
+    PreferenceCategory mOldFunc;
+    SwitchPreference mIconLayout;
     SwitchPreference mIconLayoutNew;
     SwitchPreference mLayoutH;
     SwitchPreference mWidth;
@@ -52,6 +55,8 @@ public class HomeLayoutSettings extends DashboardFragment {
         boolean mPaddingEnable = getSharedPreferences().getBoolean("prefs_key_home_folder_horizontal_padding_enable", false);
 
         mSearch = findPreference("prefs_key_home_layout_searchbar_title");
+        mOldFunc = findPreference("prefs_key_home_layout_old_func");
+        mIconLayout = findPreference("prefs_key_home_layout_unlock_grids");
         mIconLayoutNew = findPreference("prefs_key_home_layout_unlock_grids_new");
         mLayoutH = findPreference("prefs_key_home_layout_workspace_padding_horizontal_enable");
         mWidth = findPreference("prefs_key_home_folder_width");
@@ -60,8 +65,19 @@ public class HomeLayoutSettings extends DashboardFragment {
         mPadH = findPreference("prefs_key_home_folder_horizontal_padding_pad_h");
         mPadV = findPreference("prefs_key_home_folder_horizontal_padding_pad_v");
 
+        if (isMoreHyperOSVersion(2f)) {
+            mOldFunc.setVisible(false);
+            cleanKey("prefs_key_home_other_show_clock");
+            cleanKey("prefs_key_personal_assistant_overlap_mode");
+            setHide(mIconLayout, false);
+        } else {
+            setHide(mIconLayoutNew, false);
+        }
+        setHide(findPreference("prefs_key_home_folder_title_pos"), isMoreHyperOSVersion(2f));
+
         if (isPad()) {
             setHide(mSearch, false);
+            setHide(mIconLayout, false);
             setFuncHint(mLayoutH, 1);
             setFuncHint(mIconLayoutNew, 1);
         }

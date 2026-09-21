@@ -31,7 +31,8 @@ import kotlin.math.min
 class LinearGradientDrawable(
     artwork: Drawable,
     colorConfig: MediaViewColorConfig,
-    useAnim: Boolean = true
+    useAnim: Boolean = true,
+    private val drawGradient: Boolean = true
 ) : MediaControlBgDrawable(artwork, colorConfig, useAnim) {
     private var gradient: GradientDrawable = GradientDrawable()
 
@@ -121,12 +122,14 @@ class LinearGradientDrawable(
                 it.alpha = 255
             }
         }
-        gradient.colors = intArrayOf(
-            currentColor,
-            currentColor and 0x00ffffff or (51 shl 24),
-        )
-        gradient.setBounds(bounds.width() - currentSize, 0, bounds.width(), bounds.height())
-        gradient.draw(p0)
+        if (drawGradient) {
+            gradient.colors = intArrayOf(
+                currentColor,
+                currentColor and 0x00ffffff or (51 shl 24),
+            )
+            gradient.setBounds(bounds.width() - currentSize, 0, bounds.width(), bounds.height())
+            gradient.draw(p0)
+        }
         if (albumState != AnimationState.DONE || resizeState != AnimationState.DONE) {
             invalidateSelf()
         }

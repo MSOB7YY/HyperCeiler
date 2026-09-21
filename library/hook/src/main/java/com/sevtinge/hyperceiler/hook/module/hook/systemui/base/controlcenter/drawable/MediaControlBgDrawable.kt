@@ -23,6 +23,7 @@ import android.graphics.ColorFilter
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import com.sevtinge.hyperceiler.hook.module.hook.systemui.base.controlcenter.mediabackground.MediaViewColorConfig
+import com.sevtinge.hyperceiler.hook.utils.prefs.PrefsUtils
 
 // https://github.com/HowieHChen/XiaomiHelper/blob/b1ab58484326372575a72f6509580cc60c272300/app/src/main/kotlin/dev/lackluster/mihelper/hook/drawable/MediaControlBgDrawable.kt
 abstract class MediaControlBgDrawable(
@@ -36,11 +37,11 @@ abstract class MediaControlBgDrawable(
 
     protected var albumState: AnimationState = AnimationState.DONE
     protected var albumStartTimeMillis: Long = 0
-    protected val albumDuration = 333L
+    protected val albumDuration = animDuration
 
     protected var resizeState: AnimationState = AnimationState.DONE
     protected var resizeStartTimeMillis: Long = 0
-    protected val resizeDuration = 234L
+    protected val resizeDuration = animDuration * 234 / 333
     protected var sourceSize: Int = 0
     protected var currentSize: Int = 0
     protected var targetSize: Int = 0
@@ -60,5 +61,10 @@ abstract class MediaControlBgDrawable(
     @Deprecated("Deprecated in Java")
     override fun getOpacity(): Int {
         return background.opacity
+    }
+
+    private companion object {
+        val animDuration =
+            PrefsUtils.mPrefsMap.getInt("system_ui_control_center_media_control_color_anim_duration", 333).toLong()
     }
 }

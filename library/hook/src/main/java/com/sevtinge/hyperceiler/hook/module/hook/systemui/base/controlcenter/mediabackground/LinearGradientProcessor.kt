@@ -28,6 +28,7 @@ import com.sevtinge.hyperceiler.hook.module.hook.systemui.base.controlcenter.Med
 import com.sevtinge.hyperceiler.hook.module.hook.systemui.base.controlcenter.drawable.LinearGradientDrawable
 import com.sevtinge.hyperceiler.hook.module.hook.systemui.base.controlcenter.drawable.MediaControlBgDrawable
 import com.sevtinge.hyperceiler.hook.utils.prefs.PrefsUtils
+import kotlin.math.min
 
 // https://github.com/HowieHChen/XiaomiHelper/blob/b1ab58484326372575a72f6509580cc60c272300/app/src/main/kotlin/dev/lackluster/mihelper/hook/rules/systemui/media/bg/LinearGradientProcessor.kt
 class LinearGradientProcessor : BgProcessor {
@@ -77,6 +78,9 @@ class LinearGradientProcessor : BgProcessor {
         return artwork.toSquare(context.resources, true, colorConfig.bgStartColor)
     }
 
+    override fun textEndInset(width: Int, height: Int): Int =
+        (min(width, height) * ARTWORK_TEXT_OVERLAP).toInt()
+
     override fun createBackground(
         artwork: Drawable,
         colorConfig: MediaViewColorConfig
@@ -86,5 +90,10 @@ class LinearGradientProcessor : BgProcessor {
             colorConfig,
             useAnim
         )
+    }
+
+    private companion object {
+        // 渐变左缘仍是纯背景色，文本可以压进封面宽度的三成
+        const val ARTWORK_TEXT_OVERLAP = 0.7f
     }
 }

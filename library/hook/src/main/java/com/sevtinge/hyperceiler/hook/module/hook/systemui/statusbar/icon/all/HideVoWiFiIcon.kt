@@ -33,10 +33,19 @@ object HideVoWiFiIcon : BaseHook() {
     }
 
     override fun init() {
-        loadClass("com.miui.interfaces.IOperatorCustomizedPolicy\$OperatorConfig").constructors[0].createHook {
-            after {
-                it.thisObject.setBooleanField("hideVowifi", hideVoWifi)
-                it.thisObject.setBooleanField("hideVolte", hideVolte)
+        if (isMoreAndroidVersion(35)) {
+            loadClass("com.miui.interfaces.IOperatorCustomizedPolicy\$OperatorConfig").constructors[0].createHook {
+                after {
+                    it.thisObject.setBooleanField("hideVowifi", hideVoWifi)
+                    it.thisObject.setBooleanField("hideVolte", hideVolte)
+                }
+            }
+        } else {
+            loadClass("com.android.systemui.MiuiOperatorCustomizedPolicy\$MiuiOperatorConfig").constructors[0].createHook {
+                after {
+                    it.thisObject.setBooleanField("hideVowifi", hideVoWifi)
+                    it.thisObject.setBooleanField("hideVolte", hideVolte)
+                }
             }
         }
     }

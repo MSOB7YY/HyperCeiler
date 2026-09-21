@@ -29,6 +29,8 @@ import android.util.ArrayMap
 import android.widget.TextView
 import com.sevtinge.hyperceiler.hook.module.base.BaseHook
 import com.sevtinge.hyperceiler.hook.utils.callMethod
+import com.sevtinge.hyperceiler.hook.utils.devicesdk.isMoreAndroidVersion
+import com.sevtinge.hyperceiler.hook.utils.devicesdk.isMoreHyperOSVersion
 import com.sevtinge.hyperceiler.hook.utils.getObjectFieldOrNull
 import com.sevtinge.hyperceiler.hook.utils.getStaticObjectFieldOrNull
 import com.sevtinge.hyperceiler.hook.utils.setObjectField
@@ -122,9 +124,15 @@ object ChargingCVP : BaseHook() {
                 val mProviders =
                     sDependency.getObjectFieldOrNull("mProviders") as ArrayMap<*, *>
                 val mMiuiChargeControllerProvider = mProviders[clazzMiuiChargeController]!!
-                val instanceMiuiChargeController = mMiuiChargeControllerProvider
+                val instanceMiuiChargeController = if (isMoreHyperOSVersion(2f) && isMoreAndroidVersion(35)) {
+                    mMiuiChargeControllerProvider
                         .getObjectFieldOrNull("f$0")!!
                         .callMethod("get")!!
+                } else {
+                    invokeMethodBestMatch(
+                        mMiuiChargeControllerProvider, "createDependency"
+                    )!!
+                }
 
                 override fun run() {
                     doUpdateForHyperOS()
@@ -139,8 +147,11 @@ object ChargingCVP : BaseHook() {
                         instanceMiuiChargeController.getObjectFieldOrNull("mBatteryStatus")!!
                     val level = mBatteryStatus.getObjectFieldOrNull("level")
                     val plugged = mBatteryStatus.getObjectFieldOrNull("plugged") as Int
-                    val isPluggedIn =
+                    val isPluggedIn = if (isMoreHyperOSVersion(2f) && isMoreAndroidVersion(35)) {
                         mBatteryStatus.callMethod("isPluggedIn", plugged)
+                    } else {
+                        invokeMethodBestMatch(mBatteryStatus, "isPluggedIn")
+                    }
                     val mContext =
                         instanceMiuiChargeController.getObjectFieldOrNull("mContext")
                     val clazzChargeUtils =
