@@ -25,6 +25,8 @@ import android.graphics.Color
 import android.media.MediaMetadata
 import android.media.session.MediaController
 import android.media.session.MediaSession
+import android.media.session.PlaybackState
+import android.os.SystemClock
 import android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
 import android.text.SpannableStringBuilder
 import android.text.style.RelativeSizeSpan
@@ -125,11 +127,22 @@ object CustomBackground : BaseHook() {
     private val textPaddingTop by lazy {
         dp2px(mPrefsMap.getInt("system_ui_control_center_media_control_text_padding_top", 0).toFloat()).toFloat()
     }
+    private val timeSeekShortcuts by lazy {
+        mPrefsMap.getBoolean("system_ui_control_center_media_control_time_seek")
+    }
+    private val seekStep by lazy {
+        mPrefsMap.getInt("system_ui_control_center_media_control_seek_step", 5) * 1000L
+    }
+    private val controlAlpha by lazy { actionOpacity / 100f }
+    private val cardPadding by lazy {
+        dp2px(mPrefsMap.getInt("system_ui_control_center_media_control_side_padding", 0).toFloat()).toFloat()
+    }
     private val actionSpacing by lazy {
         mPrefsMap.getInt("system_ui_control_center_media_control_action_spacing", 100).coerceIn(20, 100)
     }
     private val hasLayoutTweaks by lazy {
-        hideAlbumCover || textPaddingLeft != 0f || textPaddingTop != 0f || actionSpacing != 100
+        hideAlbumCover || textPaddingLeft != 0f || textPaddingTop != 0f ||
+            cardPadding != 0f || actionSpacing != 100 || controlAlpha != 1f
     }
     private val compactTimeLabels by lazy {
         mPrefsMap.getBoolean("system_ui_control_center_media_control_compact_time")
@@ -362,9 +375,9 @@ object CustomBackground : BaseHook() {
 
     private fun shadow(view: TextView, textColor: Int) {
         val color = if (ColorUtils.calculateLuminance(textColor) > 0.5) SHADOW_DARK else SHADOW_LIGHT
-        val radius = view.textSize / 14f
+        val radius = view.textSize / 11f
         if (view.shadowRadius != radius || view.shadowColor != color) {
-            view.setShadowLayer(radius, 0f, view.textSize / 28f, color)
+            view.setShadowLayer(radius, 0f, view.textSize / 22f, color)
         }
     }
 
@@ -386,16 +399,38 @@ object CustomBackground : BaseHook() {
         text = builder
     }
 
-    private fun applyDisplayMetadata(
-        context: Context,
-        state: PanelState,
-        mediaData: Any,
-        holder: MiuiMediaViewHolder
-    ) {
-        val token = mediaData.getObjectFieldOrNullAs<MediaSession.Token>("token") ?: return
-        val controller = state.controller?.takeIf { it.sessionToken == token }
-            ?: runCatching { MediaController(context, token) }.getOrNull()?.also { state.controller = it }
-            ?: return
+    private fun controllerOf(context: Context, state: PanelState, mediaData: Any): MediaController? {
+        val token = mediaData.getObjectFieldOrNullAs<MediaSession.Token>("token") ?: return null
+        state.controller?.takeIf { it.sessionToken == token }?.let { return it }
+        return runCatching { MediaController(context, token) }.getOrNull()?.also { state.controller = it }
+    }
+
+    private fun installSeekShortcuts(holder: MiuiMediaViewHolder, state: PanelState) {
+        if (state.seekShortcutsInstalled) return
+        state.seekShortcutsInstalled = true
+        holder.elapsedTimeView.setOnClickListener {
+            state.controller?.transportControls?.seekTo(0)
+        }
+        holder.totalTimeView.setOnClickListener {
+            skipAhead(state)
+        }
+    }
+
+    private fun skipAhead(state: PanelState) {
+        val controller = state.controller ?: return
+        val playback = controller.playbackState ?: return
+        // 暂停时有的应用仍上报 speed 1.0，只有真正在播放才能外推位置
+        val drift = if (playback.state == PlaybackState.STATE_PLAYING) {
+            (SystemClock.elapsedRealtime() - playback.lastPositionUpdateTime) * playback.playbackSpeed
+        } else {
+            0f
+        }
+        val target = (playback.position + drift.toLong() + seekStep).coerceAtLeast(0)
+        val duration = controller.metadata?.getLong(MediaMetadata.METADATA_KEY_DURATION) ?: 0L
+        controller.transportControls.seekTo(if (duration > 0) target.coerceAtMost(duration) else target)
+    }
+
+    private fun applyDisplayMetadata(controller: MediaController, holder: MiuiMediaViewHolder) {
         val metadata = controller.metadata ?: return
         val subtitle = metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_SUBTITLE)?.takeIf { it.isNotBlank() }
         val description = metadata.getString(MediaMetadata.METADATA_KEY_DISPLAY_DESCRIPTION)
@@ -433,33 +468,75 @@ object CustomBackground : BaseHook() {
     private fun limitTextWidth(holder: MiuiMediaViewHolder, width: Int, height: Int) {
         val textEnd = width - processor.textEndInset(width, height)
         if (textEnd <= 0) return
-        val offsetX = textOffsetX(holder)
+        val offsetX = textOffsetX(holder, reclaimablePadding(holder))
         holder.titleText.clampWidth(textEnd, 1, offsetX)
         holder.artistText.clampWidth(textEnd, if (descriptionPosition == 2) 2 else 1, offsetX)
     }
 
-    private fun textOffsetX(holder: MiuiMediaViewHolder): Float {
-        val reclaimed =
+    private fun textOffsetX(holder: MiuiMediaViewHolder, pad: Float): Float {
+        val reclaimedCover =
             if (hideAlbumCover) (holder.titleText.left - holder.albumView.left).coerceAtLeast(0) else 0
-        return textPaddingLeft - reclaimed
+        return textPaddingLeft - reclaimedCover - pad
     }
 
     private fun applyLayoutTweaks(holder: MiuiMediaViewHolder) {
         // 清掉图片后这个 ImageView 仍会画出一层浅色底，压在标题下面
         if (hideAlbumCover && holder.albumView.alpha != 0f) holder.albumView.alpha = 0f
 
-        val offsetX = textOffsetX(holder)
-        holder.titleText.offset(offsetX, textPaddingTop)
-        holder.artistText.offset(offsetX, textPaddingTop)
+        // 进度每秒回写一次会覆盖着色，只有 alpha 留得住
+        if (controlAlpha != 1f) {
+            holder.seekBar.fade(controlAlpha)
+            holder.elapsedTimeView.fade(controlAlpha)
+            holder.totalTimeView.fade(controlAlpha)
+            holder.seamlessIcon.fade(controlAlpha)
+            holder.action0.fade(controlAlpha)
+            holder.action1.fade(controlAlpha)
+            holder.action2.fade(controlAlpha)
+            holder.action3.fade(controlAlpha)
+            holder.action4.fade(controlAlpha)
+        }
 
-        if (actionSpacing == 100) return
-        val gap = holder.action1.left - holder.action0.left
-        if (gap <= 0) return
-        val step = gap * (100 - actionSpacing) / 100f
-        holder.action1.offset(-step, 0f)
-        holder.action2.offset(-step * 2, 0f)
-        holder.action3.offset(-step * 3, 0f)
-        holder.action4.offset(-step * 4, 0f)
+        val pad = reclaimablePadding(holder)
+        val offsetX = textOffsetX(holder, pad)
+        val textY = textPaddingTop - pad
+        holder.titleText.offset(offsetX, textY)
+        holder.artistText.offset(offsetX, textY)
+
+        if (!hideAlbumCover) holder.albumView.offset(-pad, -pad)
+        holder.seamless?.offset(pad, -pad)
+        holder.elapsedTimeView.offset(-pad, pad)
+        holder.totalTimeView.offset(pad, pad)
+        holder.seekBar.offset(0f, pad)
+
+        val step = if (actionSpacing == 100) {
+            0f
+        } else {
+            val gap = holder.action1.left - holder.action0.left
+            if (gap <= 0) return else gap * (100 - actionSpacing) / 100f
+        }
+        holder.action0.offset(-pad, 0f)
+        holder.action1.offset(-step - pad, 0f)
+        holder.action2.offset(-step * 2 - pad, 0f)
+        holder.action3.offset(-step * 3 - pad, 0f)
+        holder.action4.offset(-step * 4 - pad, 0f)
+    }
+
+    // 位移超过实际留白就会被卡片裁掉，按四边里最窄的一边封顶
+    private fun reclaimablePadding(holder: MiuiMediaViewHolder): Float {
+        if (cardPadding == 0f) return 0f
+        val background = holder.mediaBg
+        val top = if (hideAlbumCover) holder.titleText.top else holder.albumView.top
+        val room = minOf(
+            holder.action0.left - background.left,
+            top - background.top,
+            background.right - holder.totalTimeView.right,
+            background.bottom - holder.seekBar.bottom
+        )
+        return cardPadding.coerceAtMost(room.coerceAtLeast(0).toFloat())
+    }
+
+    private fun View.fade(value: Float) {
+        if (alpha != value) alpha = value
     }
 
     private fun View.offset(x: Float, y: Float) {
@@ -502,13 +579,6 @@ object CustomBackground : BaseHook() {
 
     private fun updateForegroundColors(holder: MiuiMediaViewHolder, colorConfig: MediaViewColorConfig) {
         val primaryColorStateList = ColorStateList.valueOf(colorConfig.textPrimary)
-        val actionColorStateList = if (actionOpacity == 100) {
-            primaryColorStateList
-        } else {
-            ColorStateList.valueOf(
-                ColorUtils.setAlphaComponent(colorConfig.textPrimary, actionOpacity * 255 / 100)
-            )
-        }
         holder.titleText.setTextColor(colorConfig.textPrimary)
         holder.artistText.setTextColor(colorConfig.textSecondary)
         if (emphasizeText) {
@@ -521,11 +591,11 @@ object CustomBackground : BaseHook() {
             shadow(holder.totalTimeView, colorConfig.textPrimary)
         }
         holder.seamlessIcon.imageTintList = primaryColorStateList
-        holder.action0.imageTintList = actionColorStateList
-        holder.action1.imageTintList = actionColorStateList
-        holder.action2.imageTintList = actionColorStateList
-        holder.action3.imageTintList = actionColorStateList
-        holder.action4.imageTintList = actionColorStateList
+        holder.action0.imageTintList = primaryColorStateList
+        holder.action1.imageTintList = primaryColorStateList
+        holder.action2.imageTintList = primaryColorStateList
+        holder.action3.imageTintList = primaryColorStateList
+        holder.action4.imageTintList = primaryColorStateList
         holder.seekBar.thumb.setTintList(primaryColorStateList)
         holder.seekBar.progressTintList = primaryColorStateList
         holder.seekBar.progressBackgroundTintList = primaryColorStateList
@@ -547,8 +617,12 @@ object CustomBackground : BaseHook() {
         val artworkLayer = state.artworkLayer?.takeIf { artwork === state.artwork }
             ?: artwork?.loadDrawable(context)?.also { state.artworkLayer = it }
             ?: return
-        if (useDisplayMetadata) {
-            applyDisplayMetadata(context, state, mediaData, holder)
+        if (useDisplayMetadata || timeSeekShortcuts) {
+            val controller = controllerOf(context, state, mediaData)
+            if (controller != null) {
+                if (useDisplayMetadata) applyDisplayMetadata(controller, holder)
+                if (timeSeekShortcuts) installSeekShortcuts(holder, state)
+            }
         }
         val reqId = state.nextBindRequestId++
         if (isArtWorkUpdate) {
@@ -711,14 +785,15 @@ object CustomBackground : BaseHook() {
     private const val BOLD_WEIGHT = "'wght' 500"
     private const val TITLE_SEPARATOR = " · "
     private const val DESCRIPTION_SCALE = 0.8f
-    private const val SHADOW_DARK = 0x66000000
-    private const val SHADOW_LIGHT = 0x66FFFFFF.toInt()
+    private const val SHADOW_DARK = 0x99000000.toInt()
+    private const val SHADOW_LIGHT = 0x99FFFFFF.toInt()
 
     private class PanelState {
         var boundId = 0
         var nextBindRequestId = 0
         var artwork: Icon? = null
         var shiftListener: ViewTreeObserver.OnPreDrawListener? = null
+        var seekShortcutsInstalled = false
         var artworkLayer: Drawable? = null
         var controller: MediaController? = null
         var artworkDrawable: MediaControlBgDrawable? = null

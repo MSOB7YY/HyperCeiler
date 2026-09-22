@@ -50,7 +50,10 @@ public class MediaCardSettings extends DashboardFragment implements Preference.O
     SwitchPreference mEmphasizeText;
     SeekBarPreferenceCompat mTextPaddingLeft;
     SeekBarPreferenceCompat mTextPaddingTop;
+    SeekBarPreferenceCompat mSidePadding;
     SeekBarPreferenceCompat mActionSpacing;
+    SwitchPreference mTimeSeek;
+    SeekBarPreferenceCompat mSeekStep;
     SwitchPreference mCompactTime;
     ColorPickerPreference mSliderColor;
     ColorPickerPreference mProgressBarColor;
@@ -72,7 +75,10 @@ public class MediaCardSettings extends DashboardFragment implements Preference.O
         mEmphasizeText = findPreference("prefs_key_system_ui_control_center_media_control_emphasize_text");
         mTextPaddingLeft = findPreference("prefs_key_system_ui_control_center_media_control_text_padding_left");
         mTextPaddingTop = findPreference("prefs_key_system_ui_control_center_media_control_text_padding_top");
+        mSidePadding = findPreference("prefs_key_system_ui_control_center_media_control_side_padding");
         mActionSpacing = findPreference("prefs_key_system_ui_control_center_media_control_action_spacing");
+        mTimeSeek = findPreference("prefs_key_system_ui_control_center_media_control_time_seek");
+        mSeekStep = findPreference("prefs_key_system_ui_control_center_media_control_seek_step");
         mCompactTime = findPreference("prefs_key_system_ui_control_center_media_control_compact_time");
         mInverseColor = findPreference("prefs_key_system_ui_control_center_media_control_inverse_color");
         mBlurRadius = findPreference("prefs_key_system_ui_control_center_media_control_panel_background_blur");
@@ -103,7 +109,10 @@ public class MediaCardSettings extends DashboardFragment implements Preference.O
         mEmphasizeText.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
         mTextPaddingLeft.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
         mTextPaddingTop.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mSidePadding.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
         mActionSpacing.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mTimeSeek.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
+        mSeekStep.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
         mCompactTime.setVisible(mediaBackgroundModeValue != 0 && mediaBackgroundModeValue != 5);
         mCoverFade.setVisible(mediaBackgroundModeValue == 6);
         mInverseColor.setVisible(mediaBackgroundModeValue == 4);
@@ -151,7 +160,10 @@ public class MediaCardSettings extends DashboardFragment implements Preference.O
         mEmphasizeText.setVisible(mode != 0 && mode != 5);
         mTextPaddingLeft.setVisible(mode != 0 && mode != 5);
         mTextPaddingTop.setVisible(mode != 0 && mode != 5);
+        mSidePadding.setVisible(mode != 0 && mode != 5);
         mActionSpacing.setVisible(mode != 0 && mode != 5);
+        mTimeSeek.setVisible(mode != 0 && mode != 5);
+        mSeekStep.setVisible(mode != 0 && mode != 5);
         mCompactTime.setVisible(mode != 0 && mode != 5);
         mCoverFade.setVisible(mode == 6);
         mInverseColor.setVisible(mode == 4);

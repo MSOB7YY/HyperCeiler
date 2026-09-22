@@ -832,7 +832,7 @@
     <string name="system_ui_control_center_media_control_color_anim_desc">Update text color with animation</string>
     <string name="system_ui_control_center_media_control_inverse_color">Auto color inversion</string>
     <string name="system_ui_control_center_media_control_color_anim_duration">Transition duration</string>
-    <string name="system_ui_control_center_media_control_action_opacity">Control button opacity</string>
+    <string name="system_ui_control_center_media_control_action_opacity">Control opacity</string>
     <string name="system_ui_control_center_media_control_display_metadata">Prefer display metadata</string>
     <string name="system_ui_control_center_media_control_cover_fade">Cover fade</string>
     <string name="system_ui_control_center_media_control_cover_fade_desc">Tints the cover toward the card color and fades its leading edge out, the way Android 10 did. The value is how much of the cover the fade spans, so lower is subtler. The maximum matches Android 10.</string>
@@ -841,8 +841,13 @@
     <string name="system_ui_control_center_media_control_emphasize_text_desc">Bold every label, and add a shadow behind the time labels that sit over the cover art.</string>
     <string name="system_ui_control_center_media_control_text_padding_left">Text left padding</string>
     <string name="system_ui_control_center_media_control_text_padding_top">Text top padding</string>
+    <string name="system_ui_control_center_media_control_side_padding">Reduce card padding</string>
+    <string name="system_ui_control_center_media_control_side_padding_desc">How much padding to remove on all four edges of the card. Capped at the padding the card actually has.</string>
     <string name="system_ui_control_center_media_control_action_spacing">Control button spacing</string>
     <string name="system_ui_control_center_media_control_action_spacing_desc">Pulls the playback buttons closer together.</string>
+    <string name="system_ui_control_center_media_control_time_seek">Time label shortcuts</string>
+    <string name="system_ui_control_center_media_control_time_seek_desc">Tap the elapsed time to restart the track, tap the total time to skip ahead.</string>
+    <string name="system_ui_control_center_media_control_seek_step">Skip ahead step</string>
     <string name="system_ui_control_center_media_control_compact_time">Compact time labels</string>
     <string name="system_ui_control_center_media_control_display_metadata_desc">Read DISPLAY_TITLE, DISPLAY_SUBTITLE and DISPLAY_DESCRIPTION from the media session instead of the plain title and artist fields.</string>
     <string name="system_ui_control_center_media_control_media_album_mode">Media cover</string>

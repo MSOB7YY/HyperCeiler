@@ -26,7 +26,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.createBitmap
 import androidx.palette.graphics.Palette
 import kotlin.math.abs
-import kotlin.math.sqrt
+import kotlin.math.min
 
 // Port of Android 10 MediaNotificationProcessor and Notification.Builder#ensureColors
 // https://android.googlesource.com/platform/frameworks/base/+/refs/heads/android10-release/packages/SystemUI/src/com/android/systemui/statusbar/notification/MediaNotificationProcessor.java
@@ -39,7 +39,8 @@ object LegacyMediaColors {
     private const val POPULATION_FRACTION_FOR_WHITE_OR_BLACK = 2.5f
     private const val BLACK_MAX_LIGHTNESS = 0.08f
     private const val WHITE_MIN_LIGHTNESS = 0.90f
-    private const val RESIZE_BITMAP_AREA = 150 * 150
+    private const val PALETTE_SIZE = 150
+    private const val RESIZE_BITMAP_AREA = PALETTE_SIZE * PALETTE_SIZE
     private const val TEXT_COLOR_START_WIDTH_FRACTION = 0.4f
     private const val LIGHTNESS_TEXT_DIFFERENCE_LIGHT = 20
     private const val LIGHTNESS_TEXT_DIFFERENCE_DARK = -10
@@ -72,18 +73,22 @@ object LegacyMediaColors {
         return MediaViewColorConfig(textPrimary, textSecondary, backgroundColor, backgroundColor)
     }
 
+    // 卡片上只画居中正方形的那块，取色也必须限定在同一块，否则颜色来自看不见的区域
     private fun Drawable.toPaletteBitmap(): Bitmap? {
-        var width = intrinsicWidth
-        var height = intrinsicHeight
+        val width = intrinsicWidth
+        val height = intrinsicHeight
         if (width <= 0 || height <= 0) return null
-        val area = width * height
-        if (area > RESIZE_BITMAP_AREA) {
-            val factor = sqrt(RESIZE_BITMAP_AREA.toDouble() / area)
-            width = (factor * width).toInt().coerceAtLeast(1)
-            height = (factor * height).toInt().coerceAtLeast(1)
-        }
-        val bitmap = createBitmap(width, height)
-        setBounds(0, 0, width, height)
+
+        val source = min(width, height)
+        val size = min(source, PALETTE_SIZE)
+        val scale = size / source.toFloat()
+        val scaledWidth = (width * scale).toInt()
+        val scaledHeight = (height * scale).toInt()
+        val widthInset = (scaledWidth - size) / 2
+        val heightInset = (scaledHeight - size) / 2
+
+        val bitmap = createBitmap(size, size)
+        setBounds(-widthInset, -heightInset, scaledWidth - widthInset, scaledHeight - heightInset)
         draw(Canvas(bitmap))
         return bitmap
     }
